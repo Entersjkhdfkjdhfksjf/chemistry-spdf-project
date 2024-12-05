@@ -1,120 +1,178 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Atom, Orbit, Electron } from 'lucide-react';
-
-const OrbitalExplorer = () => {
-  const [activeOrbital, setActiveOrbital] = useState(null);
-  const backgroundRef = useRef(null);
-
-  const orbitalTypes = [
-    {
-      name: 's Orbital',
-      description: 'Spherical symmetry, completely uniform in all directions',
-      shape: 'Perfectly spherical cloud',
-      complexity: 'Simplest orbital type',
-      energy: 'Lowest energy state'
-    },
-    {
-      name: 'p Orbital', 
-      description: 'Dumbbell-shaped, directional electron probability',
-      shape: 'Three orthogonal dumbbell configurations',
-      complexity: 'More complex directional distribution',
-      energy: 'Higher energy than s orbital'
-    },
-    {
-      name: 'd Orbital',
-      description: 'More intricate geometrical arrangements',
-      shape: 'Four-lobed and unique spatial configurations',
-      complexity: 'Advanced electron probability patterns',
-      energy: 'Higher energy level'
-    },
-    {
-      name: 'f Orbital',
-      description: 'Extremely complex spatial distributions',
-      shape: 'Highly sophisticated multi-lobed structures',
-      complexity: 'Most intricate electron probability',
-      energy: 'Highest energy state'
-    }
-  ];
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (backgroundRef.current) {
-        const { clientX, clientY } = e;
-        backgroundRef.current.style.transform = `translate(-${clientX/50}px, -${clientY/50}px)`;
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black relative overflow-hidden">
-      <div 
-        ref={backgroundRef}
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] 
-        from-blue-700/20 via-purple-800/20 to-black/40 transition-transform duration-200"
-      />
-      
-      <div className="relative z-10 container mx-auto px-4 py-16">
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-6xl font-extralight text-white text-center mb-12 tracking-wide"
-        >
-          Quantum Orbital Explorer
-        </motion.h1>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            {orbitalTypes.map((orbital) => (
-              <motion.div
-                key={orbital.name}
-                whileHover={{ scale: 1.05 }}
-                onClick={() => setActiveOrbital(orbital)}
-                className={`p-6 rounded-xl cursor-pointer transition-all 
-                  ${activeOrbital?.name === orbital.name 
-                    ? 'bg-purple-800/70 border-2 border-purple-500' 
-                    : 'bg-purple-800/30 hover:bg-purple-800/50'}`}
-              >
-                <h2 className="text-3xl text-white mb-4">{orbital.name}</h2>
-                <p className="text-gray-300">{orbital.description}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          <AnimatePresence>
-            {activeOrbital && (
-              <motion.div
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 100 }}
-                className="bg-purple-900/60 backdrop-blur-lg rounded-2xl p-8 space-y-6"
-              >
-                <div className="flex items-center space-x-4">
-                  <Atom color="cyan" size={48} />
-                  <h3 className="text-4xl text-white">{activeOrbital.name} Details</h3>
-                </div>
-                <div className="space-y-4 text-gray-200">
-                  <p><strong>Spatial Shape:</strong> {activeOrbital.shape}</p>
-                  <p><strong>Complexity:</strong> {activeOrbital.complexity}</p>
-                  <p><strong>Energy Level:</strong> {activeOrbital.energy}</p>
-                </div>
-                <button 
-                  onClick={() => setActiveOrbital(null)}
-                  className="w-full bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-lg transition-colors"
-                >
-                  Close Details
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Orbital Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .orbital-card {
+            background: rgba(48, 43, 99, 0.6);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .orbital-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        #background-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        .orbital-details {
+            background: rgba(48, 43, 99, 0.8);
+            backdrop-filter: blur(15px);
+        }
+    </style>
+</head>
+<body>
+    <div id="background-particles"></div>
+    
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-light mb-4">Quantum Orbital Explorer</h1>
+            <p class="lead text-light-50">Dive into the Mesmerizing World of Atomic Orbitals</p>
         </div>
-      </div>
-    </div>
-  );
-};
 
-export default OrbitalExplorer;
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row g-4" id="orbital-types">
+                    <div class="col-12">
+                        <div class="orbital-card p-4 rounded-3" data-orbital="s">
+                            <h3 class="text-light">S Orbital</h3>
+                            <p class="text-light-50">Spherical symmetry, uniform electron distribution</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="orbital-card p-4 rounded-3" data-orbital="p">
+                            <h3 class="text-light">P Orbital</h3>
+                            <p class="text-light-50">Dumbbell-shaped, directional electron probability</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="orbital-card p-4 rounded-3" data-orbital="d">
+                            <h3 class="text-light">D Orbital</h3>
+                            <p class="text-light-50">Complex multi-lobed electron configurations</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="orbital-card p-4 rounded-3" data-orbital="f">
+                            <h3 class="text-light">F Orbital</h3>
+                            <p class="text-light-50">Intricate spatial probability distributions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div id="orbital-details" class="orbital-details p-5 rounded-3 d-none">
+                    <h2 id="orbital-title" class="text-light mb-4"></h2>
+                    <div id="orbital-content" class="text-light-50"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.3.4/tsparticles.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const orbitalTypes = {
+                s: {
+                    title: 'S Orbital',
+                    description: `
+                        <p>The S orbital represents the simplest and most symmetric quantum state. Characterized by a perfectly spherical electron probability distribution, it exists at the lowest energy level.</p>
+                        <ul class="list-unstyled">
+                            <li>• Uniform in all spatial directions</li>
+                            <li>• Zero angular momentum</li>
+                            <li>• Fundamental to atomic structure</li>
+                        </ul>
+                    `
+                },
+                p: {
+                    title: 'P Orbital',
+                    description: `
+                        <p>P orbitals introduce directional complexity with their distinctive dumbbell shape. They emerge at higher energy levels and demonstrate more intricate electron probability patterns.</p>
+                        <ul class="list-unstyled">
+                            <li>• Three orthogonal orientations (px, py, pz)</li>
+                            <li>• Higher energy than S orbital</li>
+                            <li>• Critical in chemical bonding</li>
+                        </ul>
+                    `
+                },
+                d: {
+                    title: 'D Orbital',
+                    description: `
+                        <p>D orbitals represent a quantum leap in complexity, featuring four-lobed structures with sophisticated spatial arrangements.</p>
+                        <ul class="list-unstyled">
+                            <li>• Five distinct directional configurations</li>
+                            <li>• Intermediate energy level</li>
+                            <li>• Crucial in transition metal chemistry</li>
+                        </ul>
+                    `
+                },
+                f: {
+                    title: 'F Orbital',
+                    description: `
+                        <p>The pinnacle of orbital complexity, F orbitals showcase the most intricate electron probability distributions in atomic systems.</p>
+                        <ul class="list-unstyled">
+                            <li>• Seven unique spatial configurations</li>
+                            <li>• Highest energy state</li>
+                            <li>• Predominant in lanthanide and actinide series</li>
+                        </ul>
+                    `
+                }
+            };
+
+            const orbitalCards = document.querySelectorAll('.orbital-card');
+            const orbitalDetails = document.getElementById('orbital-details');
+            const orbitalTitle = document.getElementById('orbital-title');
+            const orbitalContent = document.getElementById('orbital-content');
+
+            orbitalCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const orbitalType = card.dataset.orbital;
+                    const orbital = orbitalTypes[orbitalType];
+
+                    orbitalDetails.classList.remove('d-none');
+                    orbitalTitle.textContent = orbital.title;
+                    orbitalContent.innerHTML = orbital.description;
+
+                    orbitalCards.forEach(c => c.classList.remove('border', 'border-light'));
+                    card.classList.add('border', 'border-light');
+                });
+            });
+
+            // Particle Background
+            tsParticles.load("background-particles", {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#ffffff" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: false },
+                    size: { value: 3, random: true },
+                    line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+                    move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: { onhover: { enable: true, mode: "repulse" } }
+                },
+                retina_detect: true
+            });
+        });
+    </script>
+</body>
+</html>
