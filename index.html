@@ -4,36 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quantum Orbital Explorer</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
-            --deep-space-dark: #0a0a1a;
+            --deep-space: #0a0a1a;
             --quantum-blue: #1a2980;
             --orbital-accent: #26d0ce;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(to right, var(--deep-space-dark), #0f1020);
+            background: linear-gradient(135deg, var(--deep-space), #1a1a3a);
             color: #e0e0ff;
             min-height: 100vh;
             overflow-x: hidden;
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .orbital-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            perspective: 2000px;
         }
 
         .orbital-grid {
             display: grid;
-            place-items: center;
-            height: 100vh;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            max-width: 800px;
         }
 
         .orbital-tile {
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             background: rgba(26, 41, 128, 0.3);
-            border-radius: 15px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,28 +61,30 @@
             transition: all 0.4s ease;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(38, 208, 206, 0.2);
+            position: relative;
+            transform-style: preserve-3d;
         }
 
         .orbital-tile:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) rotateY(10deg);
             border-color: var(--orbital-accent);
-            box-shadow: 0 0 20px rgba(38, 208, 206, 0.3);
+            box-shadow: 0 0 30px rgba(38, 208, 206, 0.3);
         }
 
-        .orbital-fullscreen {
+        .orbital-details {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--deep-space-dark);
+            background: var(--deep-space);
             z-index: 1000;
             display: none;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
 
-        .orbital-diagram {
+        .orbital-svg {
             max-width: 80%;
             max-height: 50vh;
             margin: 0 auto;
@@ -78,201 +100,176 @@
             color: var(--orbital-accent);
             padding: 10px 20px;
             border-radius: 5px;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .back-button:hover {
-            background: var(--orbital-accent);
-            color: var(--deep-space-dark);
-        }
-
-        .flip-card {
-            perspective: 1000px;
-        }
-
-        .flip-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        .orbital-title {
             text-align: center;
-            transition: transform 0.8s;
-            transform-style: preserve-3d;
-        }
-
-        .flip-card-front, .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .flip-card-back {
-            transform: rotateY(180deg);
-        }
-
-        .flip-card.flipped .flip-card-inner {
-            transform: rotateY(180deg);
+            margin-bottom: 2rem;
         }
     </style>
 </head>
 <body>
-    <div class="orbital-grid" id="orbitalGrid">
-        <div class="orbital-tile flip-card" data-orbital="s">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <h3 class="text-light">S Orbital</h3>
-                </div>
-                <div class="flip-card-back">
-                    <span>Click to Explore</span>
-                </div>
+    <canvas id="particle-canvas"></canvas>
+    
+    <div class="orbital-container">
+        <div class="orbital-grid">
+            <div class="orbital-tile" data-orbital="s">
+                <h2>S Orbital</h2>
             </div>
-        </div>
-        <div class="orbital-tile flip-card" data-orbital="p">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <h3 class="text-light">P Orbital</h3>
-                </div>
-                <div class="flip-card-back">
-                    <span>Click to Explore</span>
-                </div>
+            <div class="orbital-tile" data-orbital="p">
+                <h2>P Orbital</h2>
             </div>
-        </div>
-        <div class="orbital-tile flip-card" data-orbital="d">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <h3 class="text-light">D Orbital</h3>
-                </div>
-                <div class="flip-card-back">
-                    <span>Click to Explore</span>
-                </div>
+            <div class="orbital-tile" data-orbital="d">
+                <h2>D Orbital</h2>
             </div>
-        </div>
-        <div class="orbital-tile flip-card" data-orbital="f">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <h3 class="text-light">F Orbital</h3>
-                </div>
-                <div class="flip-card-back">
-                    <span>Click to Explore</span>
-                </div>
+            <div class="orbital-tile" data-orbital="f">
+                <h2>F Orbital</h2>
             </div>
         </div>
     </div>
 
-    <div id="orbitalFullscreen" class="orbital-fullscreen">
-        <button class="back-button" id="backButton">← Back</button>
-        <div class="container-fluid h-100">
-            <div class="row h-100 align-items-center">
-                <div class="col-12 text-center">
-                    <h1 id="orbitalTitle" class="display-4 mb-4"></h1>
-                    <img id="orbitalDiagram" class="orbital-diagram" src="" alt="Orbital Diagram">
-                    <div id="orbitalDescription" class="mt-4 px-5 text-center"></div>
-                </div>
-            </div>
+    <div id="orbitalDetails" class="orbital-details">
+        <button id="backButton" class="back-button">← Back</button>
+        <div class="container">
+            <h1 id="orbitalTitle" class="orbital-title"></h1>
+            <svg id="orbitalSvg" class="orbital-svg" viewBox="0 0 300 300"></svg>
+            <div id="orbitalDescription" class="text-center p-4"></div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const orbitalData = {
-            s: {
-                title: 'S Orbital',
-                diagramUrls: ['/api/placeholder/600/400', '/api/placeholder/600/400'],
-                description: `
-                    <p>The S orbital represents the most fundamental quantum state, characterized by perfect spherical symmetry. These orbitals occupy the lowest energy levels and form the core of atomic structure.</p>
-                    <div class="mt-4">
-                        <h4>Quantum Characteristics</h4>
-                        <ul class="list-unstyled">
-                            <li>• Uniform electron probability distribution</li>
-                            <li>• Zero angular momentum</li>
-                            <li>• Foundational to atomic electron configurations</li>
-                            <li>• Symmetric around the nucleus</li>
-                        </ul>
-                    </div>
-                `
-            },
-            p: {
-                title: 'P Orbital',
-                diagramUrls: [
-                    '/api/placeholder/600/400', 
-                    '/api/placeholder/600/400', 
-                    '/api/placeholder/600/400'
-                ],
-                description: `
-                    <p>P orbitals introduce directional complexity with their distinctive dumbbell-like shapes. They emerge at higher energy levels and play a crucial role in chemical bonding and molecular geometry.</p>
-                    <div class="mt-4">
-                        <h4>Quantum Characteristics</h4>
-                        <ul class="list-unstyled">
-                            <li>• Three orthogonal orientations (px, py, pz)</li>
-                            <li>• Higher energy compared to S orbitals</li>
-                            <li>• Asymmetric electron probability distribution</li>
-                            <li>• Critical in forming multiple bonds</li>
-                        </ul>
-                    </div>
-                `
-            },
-            // Similar structures for d and f orbitals...
-        };
+        // Particle Background Simulation
+        class ParticleSystem {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.setup();
+            }
 
-        document.querySelectorAll('.orbital-tile').forEach(tile => {
-            tile.addEventListener('click', function() {
-                const orbitalType = this.dataset.orbital;
-                const fullscreen = document.getElementById('orbitalFullscreen');
-                const grid = document.getElementById('orbitalGrid');
+            setup() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                
+                for (let i = 0; i < 200; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        radius: Math.random() * 2,
+                        speedX: (Math.random() - 0.5) * 2,
+                        speedY: (Math.random() - 0.5) * 2,
+                        color: `rgba(38, 208, 206, ${Math.random() * 0.5})`
+                    });
+                }
+
+                this.animate();
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                this.particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+
+                    // Wrap around
+                    if (p.x < 0) p.x = this.canvas.width;
+                    if (p.x > this.canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = this.canvas.height;
+                    if (p.y > this.canvas.height) p.y = 0;
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.fill();
+                });
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // Orbital Visualization Logic
+        class OrbitalExplorer {
+            constructor() {
+                this.particleSystem = new ParticleSystem(document.getElementById('particle-canvas'));
+                this.initEventListeners();
+            }
+
+            initEventListeners() {
+                document.querySelectorAll('.orbital-tile').forEach(tile => {
+                    tile.addEventListener('click', () => this.showOrbitalDetails(tile.dataset.orbital));
+                });
+
+                document.getElementById('backButton').addEventListener('click', this.hideOrbitalDetails);
+            }
+
+            showOrbitalDetails(orbitalType) {
+                const details = document.getElementById('orbitalDetails');
+                const svg = document.getElementById('orbitalSvg');
                 const title = document.getElementById('orbitalTitle');
-                const diagram = document.getElementById('orbitalDiagram');
                 const description = document.getElementById('orbitalDescription');
 
-                // Flip animation
-                this.classList.add('flipped');
+                // Orbital-specific details
+                const orbitalData = {
+                    s: {
+                        title: 'S Orbital',
+                        svgContent: this.createSphericalOrbital(),
+                        description: 'Spherical quantum state with uniform electron distribution'
+                    },
+                    p: {
+                        title: 'P Orbital',
+                        svgContent: this.createPOrbital(),
+                        description: 'Dumbbell-shaped orbital with directional probability'
+                    }
+                    // Add more orbital types
+                };
 
-                // Hide grid, show fullscreen
-                grid.style.opacity = '0';
-                grid.style.transform = 'scale(0.5)';
-                setTimeout(() => {
-                    grid.style.display = 'none';
-                    fullscreen.style.display = 'block';
-                    fullscreen.style.opacity = '1';
-                }, 800);
-
-                // Populate fullscreen content
                 const orbital = orbitalData[orbitalType];
                 title.textContent = orbital.title;
-                diagram.src = orbital.diagramUrls[0];
-                description.innerHTML = orbital.description;
+                svg.innerHTML = orbital.svgContent;
+                description.textContent = orbital.description;
 
-                // Diagram scrolling logic
-                let currentDiagramIndex = 0;
-                document.addEventListener('wheel', function(e) {
-                    if (e.deltaY > 0 && currentDiagramIndex < orbital.diagramUrls.length - 1) {
-                        currentDiagramIndex++;
-                        diagram.src = orbital.diagramUrls[currentDiagramIndex];
-                    } else if (e.deltaY < 0 && currentDiagramIndex > 0) {
-                        currentDiagramIndex--;
-                        diagram.src = orbital.diagramUrls[currentDiagramIndex];
-                    }
+                details.style.display = 'block';
+                requestAnimationFrame(() => {
+                    details.style.opacity = '1';
                 });
-            });
-        });
+            }
 
-        document.getElementById('backButton').addEventListener('click', function() {
-            const fullscreen = document.getElementById('orbitalFullscreen');
-            const grid = document.getElementById('orbitalGrid');
-            const tiles = document.querySelectorAll('.orbital-tile');
+            hideOrbitalDetails = () => {
+                const details = document.getElementById('orbitalDetails');
+                details.style.opacity = '0';
+                setTimeout(() => {
+                    details.style.display = 'none';
+                }, 500);
+            }
 
-            fullscreen.style.opacity = '0';
-            setTimeout(() => {
-                fullscreen.style.display = 'none';
-                grid.style.display = 'grid';
-                grid.style.opacity = '1';
-                grid.style.transform = 'scale(1)';
-            }, 500);
+            createSphericalOrbital() {
+                return `
+                    <circle cx="150" cy="150" r="100" 
+                            fill="rgba(38, 208, 206, 0.2)" 
+                            stroke="var(--orbital-accent)" 
+                            stroke-width="2"/>
+                `;
+            }
 
-            tiles.forEach(tile => tile.classList.remove('flipped'));
-        });
+            createPOrbital() {
+                return `
+                    <path d="M50,150 Q150,50 250,150" 
+                          fill="none" 
+                          stroke="var(--orbital-accent)" 
+                          stroke-width="3"/>
+                    <path d="M50,150 Q150,250 250,150" 
+                          fill="none" 
+                          stroke="var(--orbital-accent)" 
+                          stroke-width="3"/>
+                `;
+            }
+        }
+
+        // Initialize the explorer
+        new OrbitalExplorer();
     </script>
 </body>
 </html>
