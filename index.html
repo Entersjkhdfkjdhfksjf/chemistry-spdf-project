@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atomic Orbitals Visualization</title>
     <style>
         * {
             margin: 0;
@@ -164,6 +167,7 @@
             flex-shrink: 0;
         }
 
+        /* S Orbital */
         .orbital-s {
             width: 100%;
             height: 100%;
@@ -175,18 +179,24 @@
             position: absolute;
             top: 0;
             left: 0;
+            animation: sOrbitalAnim 5s infinite ease-in-out;
         }
 
+        @keyframes sOrbitalAnim {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        /* P Orbital */
         .orbital-p {
             width: 100%;
             height: 100%;
-            position: absolute;
+            position: relative;
             top: 0;
             left: 0;
         }
 
-        .orbital-p::before,
-        .orbital-p::after {
+        .orbital-p::before, .orbital-p::after {
             content: '';
             position: absolute;
             width: 80%;
@@ -201,16 +211,16 @@
             transform: rotate(90deg);
         }
 
+        /* D Orbital */
         .orbital-d {
             width: 100%;
             height: 100%;
-            position: absolute;
+            position: relative;
             top: 0;
             left: 0;
         }
 
-        .orbital-d::before,
-        .orbital-d::after {
+        .orbital-d::before, .orbital-d::after {
             content: '';
             position: absolute;
             width: 70%;
@@ -233,13 +243,12 @@
         .orbital-f {
             width: 100%;
             height: 100%;
-            position: absolute;
+            position: relative;
             top: 0;
             left: 0;
         }
 
-        .orbital-f::before,
-        .orbital-f::after {
+        .orbital-f::before, .orbital-f::after {
             content: '';
             position: absolute;
             width: 60%;
@@ -315,6 +324,7 @@
         html {
             scroll-behavior: smooth;
         }
+
     </style>
 </head>
 <body>
@@ -394,7 +404,6 @@
                 </div>
             </section>
 
-            <!-- New Section for F Orbitals -->
             <section class="section" id="f-orbitals">
                 <div class="section-content">
                     <div class="section-image">
@@ -413,7 +422,6 @@
                     </div>
                 </div>
             </section>
-
         </div>
     </div>
 </body>
