@@ -1,275 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Orbital Explorer</title>
-    <style>
-        :root {
-            --deep-space: #0a0a1a;
-            --quantum-blue: #1a2980;
-            --orbital-accent: #26d0ce;
-        }
+import React, { useState, useRef, useEffect } from 'react';
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+const SPDFOrbitalVisualization = () => {
+  const [activeOrbital, setActiveOrbital] = useState(null);
+  const parallaxRef = useRef(null);
 
-        body {
-            background: linear-gradient(135deg, var(--deep-space), #1a1a3a);
-            color: #e0e0ff;
-            min-height: 100vh;
-            overflow-x: hidden;
-            font-family: 'Arial', sans-serif;
-        }
+  const orbitalData = [
+    {
+      type: 's-orbital',
+      shape: 'Spherical',
+      svg: () => (
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <circle cx="100" cy="100" r="80" 
+            fill="rgba(255,0,0,0.2)" 
+            stroke="url(#redGradient)" 
+            strokeWidth="3"/>
+          <defs>
+            <radialGradient id="redGradient">
+              <stop offset="10%" stopColor="rgba(255,0,0,0.5)"/>
+              <stop offset="95%" stopColor="rgba(255,0,0,0.1)"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      ),
+      description: 'Symmetrical, spherical electron cloud centered around the nucleus',
+      complexity: 'Lowest',
+      energyLevel: 'Closest to nucleus'
+    },
+    {
+      type: 'p-orbital',
+      shape: 'Dumbbell',
+      svg: () => (
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <path 
+            d="M100 20 L100 180" 
+            stroke="url(#greenGradient)" 
+            strokeWidth="4" 
+            fill="none"/>
+          <path 
+            d="M20 100 L180 100" 
+            stroke="url(#greenGradient)" 
+            strokeWidth="4" 
+            fill="none"/>
+          <defs>
+            <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="rgba(0,255,0,0.5)"/>
+              <stop offset="100%" stopColor="rgba(0,255,0,0.1)"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      ),
+      description: 'Directional orbitals extending along x, y, and z axes',
+      complexity: 'Moderate',
+      energyLevel: 'Intermediate'
+    },
+    {
+      type: 'd-orbital',
+      shape: 'Complex Geometry',
+      svg: () => (
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <path 
+            d="M100 50 Q150 100 100 150 Q50 100 100 50" 
+            fill="rgba(0,0,255,0.2)" 
+            stroke="url(#blueGradient)" 
+            strokeWidth="3"/>
+          <defs>
+            <radialGradient id="blueGradient">
+              <stop offset="10%" stopColor="rgba(0,0,255,0.5)"/>
+              <stop offset="95%" stopColor="rgba(0,0,255,0.1)"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      ),
+      description: 'Intricate spatial arrangements with multiple lobes',
+      complexity: 'High',
+      energyLevel: 'Further from nucleus'
+    },
+    {
+      type: 'f-orbital',
+      shape: 'Extremely Complex',
+      svg: () => (
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <path 
+            d="M100 50 Q150 100 100 150 Q50 100 100 50 
+               M50 100 Q100 50 150 100" 
+            fill="rgba(128,0,128,0.2)" 
+            stroke="url(#purpleGradient)" 
+            strokeWidth="3"/>
+          <defs>
+            <radialGradient id="purpleGradient">
+              <stop offset="10%" stopColor="rgba(128,0,128,0.5)"/>
+              <stop offset="95%" stopColor="rgba(128,0,128,0.1)"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      ),
+      description: 'Hyper-intricate multi-lobed structures with complex spatial orientation',
+      complexity: 'Highest',
+      energyLevel: 'Furthest from nucleus'
+    }
+  ];
 
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (parallaxRef.current) {
+        const { clientX, clientY } = e;
+        const x = (clientX - window.innerWidth / 2) / 50;
+        const y = (clientY - window.innerHeight / 2) / 50;
+        
+        parallaxRef.current.style.transform = `translate(${-x}px, ${-y}px)`;
+      }
+    };
 
-        .orbital-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            perspective: 2000px;
-        }
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
-        .orbital-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            max-width: 800px;
-        }
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-slate-900 to-black text-white overflow-hidden relative">
+      <div 
+        ref={parallaxRef} 
+        className="absolute inset-0 bg-gradient-to-tr from-blue-900/20 to-purple-900/20 transition-transform duration-300"
+      />
+      
+      <div className="relative z-10 container mx-auto px-6 py-16">
+        <h1 className="text-6xl font-extralight text-center mb-16 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500">
+          Quantum Orbital Landscape
+        </h1>
 
-        .orbital-tile {
-            width: 300px;
-            height: 300px;
-            background: rgba(26, 41, 128, 0.3);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(38, 208, 206, 0.2);
-            position: relative;
-            transform-style: preserve-3d;
-        }
-
-        .orbital-tile:hover {
-            transform: scale(1.05) rotateY(10deg);
-            border-color: var(--orbital-accent);
-            box-shadow: 0 0 30px rgba(38, 208, 206, 0.3);
-        }
-
-        .orbital-details {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--deep-space);
-            z-index: 1000;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .orbital-svg {
-            max-width: 80%;
-            max-height: 50vh;
-            margin: 0 auto;
-            transition: all 0.5s ease;
-        }
-
-        .back-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: transparent;
-            border: 2px solid var(--orbital-accent);
-            color: var(--orbital-accent);
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .orbital-title {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-    </style>
-</head>
-<body>
-    <canvas id="particle-canvas"></canvas>
-    
-    <div class="orbital-container">
-        <div class="orbital-grid">
-            <div class="orbital-tile" data-orbital="s">
-                <h2>S Orbital</h2>
+        <div className="grid md:grid-cols-4 gap-8">
+          {orbitalData.map((orbital) => (
+            <div
+              key={orbital.type}
+              onClick={() => setActiveOrbital(orbital)}
+              className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 cursor-pointer 
+                         transform transition-all hover:scale-105 active:scale-95 
+                         border border-white/10 shadow-2xl hover:border-cyan-500/50 
+                         flex flex-col items-center"
+            >
+              <div className="w-32 h-32 mb-4">
+                {orbital.svg()}
+              </div>
+              <h2 className="text-2xl font-thin mb-2 text-cyan-300 tracking-wider uppercase">
+                {orbital.type}
+              </h2>
+              <p className="text-center text-gray-300 text-sm">{orbital.description}</p>
             </div>
-            <div class="orbital-tile" data-orbital="p">
-                <h2>P Orbital</h2>
-            </div>
-            <div class="orbital-tile" data-orbital="d">
-                <h2>D Orbital</h2>
-            </div>
-            <div class="orbital-tile" data-orbital="f">
-                <h2>F Orbital</h2>
-            </div>
+          ))}
         </div>
+
+        {activeOrbital && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center 
+                       bg-black/70 backdrop-blur-sm p-6"
+            onClick={() => setActiveOrbital(null)}
+          >
+            <div 
+              className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 
+                         max-w-2xl text-center border border-white/20 
+                         shadow-2xl transform transition-all"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-64 h-64 mx-auto mb-8">
+                {activeOrbital.svg()}
+              </div>
+              <h3 className="text-5xl font-thin mb-6 text-cyan-300 tracking-wider">
+                {activeOrbital.type.toUpperCase()}
+              </h3>
+              <p className="mb-8 text-lg text-gray-300">{activeOrbital.description}</p>
+              <div className="grid grid-cols-2 gap-4 text-white/80">
+                <div>
+                  <strong className="text-cyan-400">Shape:</strong> {activeOrbital.shape}
+                </div>
+                <div>
+                  <strong className="text-cyan-400">Complexity:</strong> {activeOrbital.complexity}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
+  );
+};
 
-    <div id="orbitalDetails" class="orbital-details">
-        <button id="backButton" class="back-button">← Back</button>
-        <div class="container">
-            <h1 id="orbitalTitle" class="orbital-title"></h1>
-            <svg id="orbitalSvg" class="orbital-svg" viewBox="0 0 300 300"></svg>
-            <div id="orbitalDescription" class="text-center p-4"></div>
-        </div>
-    </div>
-
-    <script>
-        // Particle Background Simulation
-        class ParticleSystem {
-            constructor(canvas) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.particles = [];
-                this.setup();
-            }
-
-            setup() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-                
-                for (let i = 0; i < 200; i++) {
-                    this.particles.push({
-                        x: Math.random() * this.canvas.width,
-                        y: Math.random() * this.canvas.height,
-                        radius: Math.random() * 2,
-                        speedX: (Math.random() - 0.5) * 2,
-                        speedY: (Math.random() - 0.5) * 2,
-                        color: `rgba(38, 208, 206, ${Math.random() * 0.5})`
-                    });
-                }
-
-                this.animate();
-            }
-
-            animate() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-                this.particles.forEach(p => {
-                    p.x += p.speedX;
-                    p.y += p.speedY;
-
-                    // Wrap around
-                    if (p.x < 0) p.x = this.canvas.width;
-                    if (p.x > this.canvas.width) p.x = 0;
-                    if (p.y < 0) p.y = this.canvas.height;
-                    if (p.y > this.canvas.height) p.y = 0;
-
-                    this.ctx.beginPath();
-                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    this.ctx.fillStyle = p.color;
-                    this.ctx.fill();
-                });
-
-                requestAnimationFrame(() => this.animate());
-            }
-        }
-
-        // Orbital Visualization Logic
-        class OrbitalExplorer {
-            constructor() {
-                this.particleSystem = new ParticleSystem(document.getElementById('particle-canvas'));
-                this.initEventListeners();
-            }
-
-            initEventListeners() {
-                document.querySelectorAll('.orbital-tile').forEach(tile => {
-                    tile.addEventListener('click', () => this.showOrbitalDetails(tile.dataset.orbital));
-                });
-
-                document.getElementById('backButton').addEventListener('click', this.hideOrbitalDetails);
-            }
-
-            showOrbitalDetails(orbitalType) {
-                const details = document.getElementById('orbitalDetails');
-                const svg = document.getElementById('orbitalSvg');
-                const title = document.getElementById('orbitalTitle');
-                const description = document.getElementById('orbitalDescription');
-
-                // Orbital-specific details
-                const orbitalData = {
-                    s: {
-                        title: 'S Orbital',
-                        svgContent: this.createSphericalOrbital(),
-                        description: 'Spherical quantum state with uniform electron distribution'
-                    },
-                    p: {
-                        title: 'P Orbital',
-                        svgContent: this.createPOrbital(),
-                        description: 'Dumbbell-shaped orbital with directional probability'
-                    }
-                    // Add more orbital types
-                };
-
-                const orbital = orbitalData[orbitalType];
-                title.textContent = orbital.title;
-                svg.innerHTML = orbital.svgContent;
-                description.textContent = orbital.description;
-
-                details.style.display = 'block';
-                requestAnimationFrame(() => {
-                    details.style.opacity = '1';
-                });
-            }
-
-            hideOrbitalDetails = () => {
-                const details = document.getElementById('orbitalDetails');
-                details.style.opacity = '0';
-                setTimeout(() => {
-                    details.style.display = 'none';
-                }, 500);
-            }
-
-            createSphericalOrbital() {
-                return `
-                    <circle cx="150" cy="150" r="100" 
-                            fill="rgba(38, 208, 206, 0.2)" 
-                            stroke="var(--orbital-accent)" 
-                            stroke-width="2"/>
-                `;
-            }
-
-            createPOrbital() {
-                return `
-                    <path d="M50,150 Q150,50 250,150" 
-                          fill="none" 
-                          stroke="var(--orbital-accent)" 
-                          stroke-width="3"/>
-                    <path d="M50,150 Q150,250 250,150" 
-                          fill="none" 
-                          stroke="var(--orbital-accent)" 
-                          stroke-width="3"/>
-                `;
-            }
-        }
-
-        // Initialize the explorer
-        new OrbitalExplorer();
-    </script>
-</body>
-</html>
+export default SPDFOrbitalVisualization;
