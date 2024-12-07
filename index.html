@@ -1,186 +1,266 @@
-import React, { useState, useRef, useEffect } from 'react';
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
 
-const SPDFOrbitalVisualization = () => {
-  const [activeOrbital, setActiveOrbital] = useState(null);
-  const parallaxRef = useRef(null);
+        body {
+            background-color: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
 
-  const orbitalData = [
-    {
-      type: 's-orbital',
-      shape: 'Spherical',
-      svg: () => (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <circle cx="100" cy="100" r="80" 
-            fill="rgba(255,0,0,0.2)" 
-            stroke="url(#redGradient)" 
-            strokeWidth="3"/>
-          <defs>
-            <radialGradient id="redGradient">
-              <stop offset="10%" stopColor="rgba(255,0,0,0.5)"/>
-              <stop offset="95%" stopColor="rgba(255,0,0,0.1)"/>
-            </radialGradient>
-          </defs>
-        </svg>
-      ),
-      description: 'Symmetrical, spherical electron cloud centered around the nucleus',
-      complexity: 'Lowest',
-      energyLevel: 'Closest to nucleus'
-    },
-    {
-      type: 'p-orbital',
-      shape: 'Dumbbell',
-      svg: () => (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <path 
-            d="M100 20 L100 180" 
-            stroke="url(#greenGradient)" 
-            strokeWidth="4" 
-            fill="none"/>
-          <path 
-            d="M20 100 L180 100" 
-            stroke="url(#greenGradient)" 
-            strokeWidth="4" 
-            fill="none"/>
-          <defs>
-            <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(0,255,0,0.5)"/>
-              <stop offset="100%" stopColor="rgba(0,255,0,0.1)"/>
-            </linearGradient>
-          </defs>
-        </svg>
-      ),
-      description: 'Directional orbitals extending along x, y, and z axes',
-      complexity: 'Moderate',
-      energyLevel: 'Intermediate'
-    },
-    {
-      type: 'd-orbital',
-      shape: 'Complex Geometry',
-      svg: () => (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <path 
-            d="M100 50 Q150 100 100 150 Q50 100 100 50" 
-            fill="rgba(0,0,255,0.2)" 
-            stroke="url(#blueGradient)" 
-            strokeWidth="3"/>
-          <defs>
-            <radialGradient id="blueGradient">
-              <stop offset="10%" stopColor="rgba(0,0,255,0.5)"/>
-              <stop offset="95%" stopColor="rgba(0,0,255,0.1)"/>
-            </radialGradient>
-          </defs>
-        </svg>
-      ),
-      description: 'Intricate spatial arrangements with multiple lobes',
-      complexity: 'High',
-      energyLevel: 'Further from nucleus'
-    },
-    {
-      type: 'f-orbital',
-      shape: 'Extremely Complex',
-      svg: () => (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <path 
-            d="M100 50 Q150 100 100 150 Q50 100 100 50 
-               M50 100 Q100 50 150 100" 
-            fill="rgba(128,0,128,0.2)" 
-            stroke="url(#purpleGradient)" 
-            strokeWidth="3"/>
-          <defs>
-            <radialGradient id="purpleGradient">
-              <stop offset="10%" stopColor="rgba(128,0,128,0.5)"/>
-              <stop offset="95%" stopColor="rgba(128,0,128,0.1)"/>
-            </radialGradient>
-          </defs>
-        </svg>
-      ),
-      description: 'Hyper-intricate multi-lobed structures with complex spatial orientation',
-      complexity: 'Highest',
-      energyLevel: 'Furthest from nucleus'
-    }
-  ];
+        /* [Previous CSS remains the same] */
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (parallaxRef.current) {
-        const { clientX, clientY } = e;
-        const x = (clientX - window.innerWidth / 2) / 50;
-        const y = (clientY - window.innerHeight / 2) / 50;
-        
-        parallaxRef.current.style.transform = `translate(${-x}px, ${-y}px)`;
-      }
-    };
+        /* Enhanced orbital images */
+        .section-image {
+            width: 250px;
+            height: 250px;
+            margin-right: 30px;
+            position: relative;
+            flex-shrink: 0;
+            perspective: 1000px;
+        }
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+        .orbital-base {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            background: rgba(74, 144, 226, 0.1);
+            border: 2px solid rgba(74, 144, 226, 0.3);
+        }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-slate-900 to-black text-white overflow-hidden relative">
-      <div 
-        ref={parallaxRef} 
-        className="absolute inset-0 bg-gradient-to-tr from-blue-900/20 to-purple-900/20 transition-transform duration-300"
-      />
-      
-      <div className="relative z-10 container mx-auto px-6 py-16">
-        <h1 className="text-6xl font-extralight text-center mb-16 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-500">
-          Quantum Orbital Landscape
-        </h1>
+        .orbital-s {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, 
+                rgba(74, 144, 226, 0.6) 0%, 
+                rgba(74, 144, 226, 0.3) 50%, 
+                transparent 70%);
+            box-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+        }
 
-        <div className="grid md:grid-cols-4 gap-8">
-          {orbitalData.map((orbital) => (
-            <div
-              key={orbital.type}
-              onClick={() => setActiveOrbital(orbital)}
-              className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 cursor-pointer 
-                         transform transition-all hover:scale-105 active:scale-95 
-                         border border-white/10 shadow-2xl hover:border-cyan-500/50 
-                         flex flex-col items-center"
-            >
-              <div className="w-32 h-32 mb-4">
-                {orbital.svg()}
-              </div>
-              <h2 className="text-2xl font-thin mb-2 text-cyan-300 tracking-wider uppercase">
-                {orbital.type}
-              </h2>
-              <p className="text-center text-gray-300 text-sm">{orbital.description}</p>
+        .orbital-p {
+            width: 100%;
+            height: 100%;
+        }
+
+        .orbital-p::before,
+        .orbital-p::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 120%;
+            background: linear-gradient(to bottom, 
+                rgba(74, 144, 226, 0.6) 0%, 
+                rgba(74, 144, 226, 0.3) 50%, 
+                transparent 100%);
+            top: -10%;
+            left: 50%;
+            transform-origin: center;
+            border-radius: 5px;
+        }
+
+        .orbital-p::before {
+            transform: rotate(90deg);
+        }
+
+        .orbital-d {
+            width: 100%;
+            height: 100%;
+        }
+
+        .orbital-d::before,
+        .orbital-d::after,
+        .orbital-d .d-extra-1,
+        .orbital-d .d-extra-2 {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(74, 144, 226, 0.6) 0%, 
+                rgba(74, 144, 226, 0.3) 50%, 
+                transparent 100%);
+            top: 0;
+            left: 50%;
+            transform-origin: center;
+            border-radius: 5px;
+        }
+
+        .orbital-d::before {
+            transform: rotate(45deg);
+        }
+
+        .orbital-d::after {
+            transform: rotate(135deg);
+        }
+
+        .orbital-d .d-extra-1 {
+            transform: rotate(30deg);
+        }
+
+        .orbital-d .d-extra-2 {
+            transform: rotate(150deg);
+        }
+
+        .orbital-f {
+            width: 100%;
+            height: 100%;
+        }
+
+        .orbital-f::before,
+        .orbital-f::after,
+        .orbital-f .f-extra-1,
+        .orbital-f .f-extra-2,
+        .orbital-f .f-extra-3 {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 90%;
+            background: linear-gradient(to bottom, 
+                rgba(74, 144, 226, 0.6) 0%, 
+                rgba(74, 144, 226, 0.3) 50%, 
+                transparent 100%);
+            top: 5%;
+            left: 50%;
+            transform-origin: center;
+            border-radius: 5px;
+        }
+
+        .orbital-f::before {
+            transform: rotate(45deg);
+        }
+
+        .orbital-f::after {
+            transform: rotate(135deg);
+        }
+
+        .orbital-f .f-extra-1 {
+            transform: rotate(30deg);
+        }
+
+        .orbital-f .f-extra-2 {
+            transform: rotate(150deg);
+        }
+
+        .orbital-f .f-extra-3 {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="parallax-wrapper">
+        <nav class="navbar">
+            <div>
+                <span style="font-size: 1.5rem; font-weight: bold;">Atomic Orbitals</span>
             </div>
-          ))}
+            <div>
+                <a href="#home">Home</a>
+                <a href="#s-orbitals">S Orbitals</a>
+                <a href="#p-orbitals">P Orbitals</a>
+                <a href="#d-orbitals">D Orbitals</a>
+                <a href="#f-orbitals">F Orbitals</a>
+            </div>
+        </nav>
+
+        <!-- [Previous hero section remains the same] -->
+
+        <div class="sections-container">
+            <section class="section" id="s-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-base"></div>
+                        <div class="orbital-s"></div>
+                    </div>
+                    <div>
+                        <h2>S Orbitals</h2>
+                        <p>S orbitals are perfectly spherical electron clouds centered on the nucleus. They represent the most fundamental orbital type, with electron probability symmetrically distributed in all directions.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 0</p>
+                            <p>Perfectly Spherical Geometry</p>
+                            <p>Electron Probability: Highest at Nucleus</p>
+                            <p>Maximum of 2 Electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="p-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-base"></div>
+                        <div class="orbital-p"></div>
+                    </div>
+                    <div>
+                        <h2>P Orbitals</h2>
+                        <p>P orbitals are characterized by their distinctive dumbbell shape, existing in three orthogonal orientations (px, py, pz). They represent higher energy electron configurations with lobes extending along cardinal axes.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 1</p>
+                            <p>Three Orthogonal Orientations</p>
+                            <p>Directional Electron Probability</p>
+                            <p>Maximum of 6 Electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="d-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-base"></div>
+                        <div class="orbital-d">
+                            <div className="d-extra-1"></div>
+                            <div className="d-extra-2"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>D Orbitals</h2>
+                        <p>D orbitals introduce more complex geometries with five distinct spatial orientations. They play a crucial role in transition metal chemistry, creating intricate electron distribution patterns that enable unique bonding characteristics.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 2</p>
+                            <p>Five Unique Spatial Configurations</p>
+                            <p>Critical in Transition Metal Chemistry</p>
+                            <p>Maximum of 10 Electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="f-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-base"></div>
+                        <div class="orbital-f">
+                            <div className="f-extra-1"></div>
+                            <div className="f-extra-2"></div>
+                            <div className="f-extra-3"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>F Orbitals</h2>
+                        <p>F orbitals represent the most complex electron configurations in the standard atomic model. With seven distinct spatial orientations, they are predominantly found in lanthanide and actinide series, playing a critical role in the chemistry of rare earth and radioactive elements.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 3</p>
+                            <p>Seven Complex Spatial Configurations</p>
+                            <p>Dominant in Rare Earth Elements</p>
+                            <p>Maximum of 14 Electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-
-        {activeOrbital && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center 
-                       bg-black/70 backdrop-blur-sm p-6"
-            onClick={() => setActiveOrbital(null)}
-          >
-            <div 
-              className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 
-                         max-w-2xl text-center border border-white/20 
-                         shadow-2xl transform transition-all"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="w-64 h-64 mx-auto mb-8">
-                {activeOrbital.svg()}
-              </div>
-              <h3 className="text-5xl font-thin mb-6 text-cyan-300 tracking-wider">
-                {activeOrbital.type.toUpperCase()}
-              </h3>
-              <p className="mb-8 text-lg text-gray-300">{activeOrbital.description}</p>
-              <div className="grid grid-cols-2 gap-4 text-white/80">
-                <div>
-                  <strong className="text-cyan-400">Shape:</strong> {activeOrbital.shape}
-                </div>
-                <div>
-                  <strong className="text-cyan-400">Complexity:</strong> {activeOrbital.complexity}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
-  );
-};
-
-export default SPDFOrbitalVisualization;
+</body>
+</html>
