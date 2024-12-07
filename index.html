@@ -229,6 +229,45 @@
             transform: rotate(135deg);
         }
 
+        /* F Orbital */
+        .orbital-f {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .orbital-f::before,
+        .orbital-f::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 20%;
+            background: rgba(74, 144, 226, 0.5);
+            top: 25%;
+            left: 10%;
+            transform-origin: center;
+        }
+
+        .orbital-f::before {
+            transform: rotate(45deg);
+        }
+
+        .orbital-f::after {
+            transform: rotate(135deg);
+        }
+
+        .orbital-f .orbital-f-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.6) 0%, transparent 50%);
+            border-radius: 50%;
+        }
+
         @keyframes floatCard {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
@@ -289,6 +328,7 @@
                 <a href="#s-orbitals">S Orbitals</a>
                 <a href="#p-orbitals">P Orbitals</a>
                 <a href="#d-orbitals">D Orbitals</a>
+                <a href="#f-orbitals">F Orbitals</a>
             </div>
         </nav>
 
@@ -353,6 +393,27 @@
                     </div>
                 </div>
             </section>
+
+            <!-- New Section for F Orbitals -->
+            <section class="section" id="f-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-f">
+                            <div class="orbital-f-inner"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>F Orbitals</h2>
+                        <p>F orbitals are highly complex, with seven possible orientations. They play a critical role in the chemistry of the lanthanide and actinide series, holding up to 14 electrons.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 3</p>
+                            <p>Highly Complex Geometries</p>
+                            <p>Maximum of 14 electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </div>
 </body>
