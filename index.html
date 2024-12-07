@@ -1,9 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atomic Orbitals Visualization</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +13,12 @@
             background-color: #0a0a0a;
             color: #fff;
             overflow-x: hidden;
+        }
+
+        .parallax-wrapper {
+            width: 100%;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
         }
 
         .navbar {
@@ -63,6 +66,44 @@
             mix-blend-mode: screen;
         }
 
+        .ball-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(74, 144, 226, 0.4) 0%,
+                rgba(74, 144, 226, 0.2) 30%,
+                rgba(74, 144, 226, 0.1) 60%,
+                transparent 100%);
+            filter: blur(20px);
+            animation: floatBall1 15s infinite ease-in-out;
+        }
+
+        .ball-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at 70% 70%, 
+                rgba(74, 144, 226, 0.3) 0%,
+                rgba(74, 144, 226, 0.15) 40%,
+                rgba(74, 144, 226, 0.05) 70%,
+                transparent 100%);
+            filter: blur(15px);
+            animation: floatBall2 20s infinite ease-in-out;
+        }
+
+        @keyframes floatBall1 {
+            0%, 100% { transform: translate(-20%, -20%) scale(1); opacity: 0.8; }
+            25% { transform: translate(10%, 15%) scale(1.2); opacity: 1; }
+            50% { transform: translate(20%, -10%) scale(0.9); opacity: 0.7; }
+            75% { transform: translate(-15%, 20%) scale(1.1); opacity: 0.9; }
+        }
+
+        @keyframes floatBall2 {
+            0%, 100% { transform: translate(20%, 20%) scale(1.1); opacity: 0.7; }
+            25% { transform: translate(-15%, -20%) scale(0.9); opacity: 0.9; }
+            50% { transform: translate(-20%, 15%) scale(1.2); opacity: 0.8; }
+            75% { transform: translate(15%, -15%) scale(1); opacity: 1; }
+        }
+
         .hero-content {
             position: relative;
             z-index: 1;
@@ -75,6 +116,13 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(74, 144, 226, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #ccc;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .sections-container {
@@ -108,68 +156,69 @@
             align-items: center;
         }
 
-        .orbital-s, .orbital-p, .orbital-d, .orbital-f {
-            position: relative;
-            margin: 20px auto;
+        .section-image {
             width: 200px;
             height: 200px;
-            border-radius: 50%;
-            background-color: rgba(74, 144, 226, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin-right: 30px;
+            position: relative;
+            flex-shrink: 0;
         }
 
-        /* S orbital */
-        .orbital-s::before {
-            content: '';
-            position: absolute;
+        .orbital-s {
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(74, 144, 226, 0.5) 0%, rgba(74, 144, 226, 0.2) 60%, transparent 100%);
             border-radius: 50%;
-            animation: orbit-s 5s ease-in-out infinite;
+            background: radial-gradient(circle at center, 
+                rgba(74, 144, 226, 0.6) 0%, 
+                rgba(74, 144, 226, 0.3) 50%, 
+                transparent 70%);
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
-        @keyframes orbit-s {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.1);
-                opacity: 0.7;
-            }
+        .orbital-p {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
-        /* P orbital */
-        .orbital-p::before, .orbital-p::after {
+        .orbital-p::before,
+        .orbital-p::after {
             content: '';
             position: absolute;
-            width: 60%;
-            height: 15%;
-            background: rgba(74, 144, 226, 0.5);
-            border-radius: 50%;
+            width: 80%;
+            height: 20%;
+            background: rgba(74, 144, 226, 0.4);
+            top: 40%;
+            left: 10%;
+            transform-origin: center;
         }
 
         .orbital-p::before {
             transform: rotate(90deg);
         }
 
-        .orbital-p::after {
-            transform: rotate(0deg);
+        .orbital-d {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
-        /* D orbital */
-        .orbital-d::before, .orbital-d::after, .orbital-d .orbital-d2 {
+        .orbital-d::before,
+        .orbital-d::after {
             content: '';
             position: absolute;
             width: 70%;
             height: 15%;
-            background: rgba(74, 144, 226, 0.5);
-            top: 40%;
+            background: rgba(74, 144, 226, 0.4);
+            top: 42%;
             left: 15%;
-            border-radius: 50%;
+            transform-origin: center;
         }
 
         .orbital-d::before {
@@ -180,47 +229,87 @@
             transform: rotate(135deg);
         }
 
-        .orbital-d .orbital-d2 {
-            transform: rotate(90deg);
-        }
-
-        /* F orbital */
-        .orbital-f .orbital-f1, .orbital-f .orbital-f2, .orbital-f .orbital-f3 {
-            content: '';
+        /* F Orbital */
+        .orbital-f {
+            width: 100%;
+            height: 100%;
             position: absolute;
-            width: 40%;
-            height: 15%;
-            background: rgba(74, 144, 226, 0.5);
-            border-radius: 50%;
+            top: 0;
+            left: 0;
         }
 
-        .orbital-f .orbital-f1 {
-            transform: rotate(45deg);
-        }
-
-        .orbital-f .orbital-f2 {
-            transform: rotate(135deg);
-        }
-
-        .orbital-f .orbital-f3 {
-            transform: rotate(225deg);
-        }
-
-        .orbital-f .orbital-f4 {
+        .orbital-f::before,
+        .orbital-f::after {
             content: '';
             position: absolute;
             width: 60%;
-            height: 15%;
+            height: 20%;
             background: rgba(74, 144, 226, 0.5);
+            top: 25%;
+            left: 10%;
+            transform-origin: center;
+        }
+
+        .orbital-f::before {
+            transform: rotate(45deg);
+        }
+
+        .orbital-f::after {
+            transform: rotate(135deg);
+        }
+
+        .orbital-f .orbital-f-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.6) 0%, transparent 50%);
             border-radius: 50%;
-            top: 40%;
-            left: 20%;
-            transform: rotate(90deg);
         }
 
         @keyframes floatCard {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #4a90e2;
+            text-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+        }
+
+        .section p, .section li {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .stat {
+            background: rgba(74, 144, 226, 0.1);
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #4a90e2;
+            animation: glowBorder 4s infinite alternate;
+        }
+
+        @keyframes glowBorder {
+            0% { border-color: rgba(74, 144, 226, 0.5); }
+            100% { border-color: rgba(74, 144, 226, 1); }
+        }
+
+        ul {
+            list-style-position: inside;
+            margin-left: 20px;
+        }
+
+        .section-content:hover {
+            transform: translateY(-10px);
+            transition: transform 0.3s ease-out;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6),
+                        0 0 40px rgba(74, 144, 226, 0.2);
         }
 
         html {
@@ -229,63 +318,103 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div>
-            <span style="font-size: 1.5rem; font-weight: bold;">Atomic Orbitals</span>
+    <div class="parallax-wrapper">
+        <nav class="navbar">
+            <div>
+                <span style="font-size: 1.5rem; font-weight: bold;">Atomic Orbitals</span>
+            </div>
+            <div>
+                <a href="#home">Home</a>
+                <a href="#s-orbitals">S Orbitals</a>
+                <a href="#p-orbitals">P Orbitals</a>
+                <a href="#d-orbitals">D Orbitals</a>
+                <a href="#f-orbitals">F Orbitals</a>
+            </div>
+        </nav>
+
+        <section class="hero" id="home">
+            <div class="floating-ball ball-1"></div>
+            <div class="floating-ball ball-2"></div>
+            <div class="hero-content">
+                <h1>SPDF Orbitals</h1>
+                <p>Exploring the Quantum Landscape of Electron Configurations</p>
+                <p style="font-size: 1rem; margin-top: 20px;">Quantum Mechanics Visualization</p>
+            </div>
+        </section>
+
+        <div class="sections-container">
+            <section class="section" id="s-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-s"></div>
+                    </div>
+                    <div>
+                        <h2>S Orbitals</h2>
+                        <p>S orbitals are spherical in shape and symmetric around the nucleus. They represent the most basic electron configuration, with the highest probability of finding an electron at the center of the orbital.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 0</p>
+                            <p>Spherical Shape</p>
+                            <p>Maximum of 2 electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="p-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-p"></div>
+                    </div>
+                    <div>
+                        <h2>P Orbitals</h2>
+                        <p>P orbitals have a distinctive dumbbell shape, oriented along the x, y, and z axes. They can hold up to 6 electrons, with two electrons in each of the three possible orientations.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 1</p>
+                            <p>Dumbbell-like Shape</p>
+                            <p>Maximum of 6 electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="d-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-d"></div>
+                    </div>
+                    <div>
+                        <h2>D Orbitals</h2>
+                        <p>D orbitals have more complex geometries, with five different orientations. They play a crucial role in transition metal chemistry and create more intricate electron distribution patterns.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 2</p>
+                            <p>Complex Geometric Shapes</p>
+                            <p>Maximum of 10 electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- New Section for F Orbitals -->
+            <section class="section" id="f-orbitals">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="orbital-f">
+                            <div class="orbital-f-inner"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2>F Orbitals</h2>
+                        <p>F orbitals are highly complex, with seven possible orientations. They play a critical role in the chemistry of the lanthanide and actinide series, holding up to 14 electrons.</p>
+                        <div class="stat">
+                            <p>Quantum Number l = 3</p>
+                            <p>Highly Complex Geometries</p>
+                            <p>Maximum of 14 electrons</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
-        <div>
-            <a href="#s-orbitals">S Orbitals</a>
-            <a href="#p-orbitals">P Orbitals</a>
-            <a href="#d-orbitals">D Orbitals</a>
-            <a href="#f-orbitals">F Orbitals</a>
-        </div>
-    </nav>
-
-    <div class="sections-container">
-        <section class="section" id="s-orbitals">
-            <div class="section-content">
-                <div class="orbital-s"></div>
-                <div>
-                    <h2>S Orbitals</h2>
-                    <p>The S orbital has a spherical shape with no angular nodes. It represents the simplest electron distribution with a maximum of two electrons.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="p-orbitals">
-            <div class="section-content">
-                <div class="orbital-p"></div>
-                <div>
-                    <h2>P Orbitals</h2>
-                    <p>The P orbitals are shaped like dumbbells and can be oriented along three axes (x, y, z). Each P orbital can hold up to six electrons in total.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="d-orbitals">
-            <div class="section-content">
-                <div class="orbital-d"></div>
-                <div>
-                    <h2>D Orbitals</h2>
-                    <p>The D orbitals have more complex shapes, typically described as cloverleafs. There are five D orbitals in total, each with different orientations.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section" id="f-orbitals">
-            <div class="section-content">
-                <div class="orbital-f">
-                    <div class="orbital-f1"></div>
-                    <div class="orbital-f2"></div>
-                    <div class="orbital-f3"></div>
-                    <div class="orbital-f4"></div>
-                </div>
-                <div>
-                    <h2>F Orbitals</h2>
-                    <p>The F orbitals have even more complex shapes, with seven lobes in total. These orbitals play an important role in the chemistry of lanthanides and actinides.</p>
-                </div>
-            </div>
-        </section>
     </div>
 </body>
 </html>
