@@ -167,19 +167,57 @@
             flex-shrink: 0;
         }
 
-        /* S Orbital */
+        /* Updated to use images */
+        /* S Orbital Image */
         .orbital-s {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at center, 
-                rgba(74, 144, 226, 0.6) 0%, 
-                rgba(74, 144, 226, 0.3) 50%, 
-                transparent 70%);
+            background-image: url('s.png');
+            background-size: cover;
+            background-position: center;
             position: absolute;
             top: 0;
             left: 0;
             animation: sOrbitalAnim 5s infinite ease-in-out;
+        }
+
+        /* P Orbital Image */
+        .orbital-p {
+            width: 100%;
+            height: 100%;
+            background-image: url('p.png');
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: pOrbitalAnim 5s infinite ease-in-out;
+        }
+
+        /* D Orbital Image */
+        .orbital-d {
+            width: 100%;
+            height: 100%;
+            background-image: url('d.jpeg');
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: dOrbitalAnim 5s infinite ease-in-out;
+        }
+
+        /* F Orbital Image */
+        .orbital-f {
+            width: 100%;
+            height: 100%;
+            background-image: url('f.png');
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: fOrbitalAnim 5s infinite ease-in-out;
         }
 
         @keyframes sOrbitalAnim {
@@ -187,99 +225,19 @@
             50% { transform: scale(1.1); opacity: 0.5; }
         }
 
-        /* P Orbital */
-        .orbital-p {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            top: 0;
-            left: 0;
+        @keyframes pOrbitalAnim {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.5; }
         }
 
-        .orbital-p::before, .orbital-p::after {
-            content: '';
-            position: absolute;
-            width: 80%;
-            height: 20%;
-            background: rgba(74, 144, 226, 0.4);
-            top: 40%;
-            left: 10%;
-            transform-origin: center;
+        @keyframes dOrbitalAnim {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.5; }
         }
 
-        .orbital-p::before {
-            transform: rotate(90deg);
-        }
-
-        /* D Orbital */
-        .orbital-d {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            top: 0;
-            left: 0;
-        }
-
-        .orbital-d::before, .orbital-d::after {
-            content: '';
-            position: absolute;
-            width: 70%;
-            height: 15%;
-            background: rgba(74, 144, 226, 0.4);
-            top: 42%;
-            left: 15%;
-            transform-origin: center;
-        }
-
-        .orbital-d::before {
-            transform: rotate(45deg);
-        }
-
-        .orbital-d::after {
-            transform: rotate(135deg);
-        }
-
-        /* F Orbital */
-        .orbital-f {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            top: 0;
-            left: 0;
-        }
-
-        .orbital-f::before, .orbital-f::after {
-            content: '';
-            position: absolute;
-            width: 60%;
-            height: 20%;
-            background: rgba(74, 144, 226, 0.5);
-            top: 25%;
-            left: 10%;
-            transform-origin: center;
-        }
-
-        .orbital-f::before {
-            transform: rotate(45deg);
-        }
-
-        .orbital-f::after {
-            transform: rotate(135deg);
-        }
-
-        .orbital-f .orbital-f-inner {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: radial-gradient(circle, rgba(74, 144, 226, 0.6) 0%, transparent 50%);
-            border-radius: 50%;
-        }
-
-        @keyframes floatCard {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        @keyframes fOrbitalAnim {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.5; }
         }
 
         .section h2 {
